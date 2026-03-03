@@ -159,6 +159,17 @@ svg.chart{width:100%;display:block;overflow:visible;}
   font-size:10px;color:var(--dim);line-height:1.8;background:var(--surf);
 }
 </style>
+<!-- =====================================================
+     Google Analytics 4
+     TODO: 下の G-XXXXXXXXXX を実際の測定IDに置き換えてください
+     ===================================================== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5GZVHQF8J4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5GZVHQF8J4');
+</script>
 </head>
 <body>
 
@@ -331,6 +342,13 @@ function renderList() {
       selectedCountry = selectedCountry === d.name ? null : d.name;
       renderList();
       renderDetail(selectedCountry ? d : null);
+      // GA4 カスタムイベント：国クリック計測
+      if (selectedCountry && typeof gtag !== "undefined") {
+        gtag("event", "select_country", {
+          country_name: selectedCountry,
+          sggi_value:   Math.round((d.sggi || 0) * 10000) / 10000,
+        });
+      }
     });
     list.appendChild(row);
   });
