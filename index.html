@@ -35,7 +35,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .header-meta{margin-top:14px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;}
 .meta-chip{background:var(--surf2);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--dim2);}
 .meta-chip span{color:var(--text);font-weight:500;}
-.app{display:grid;grid-template-columns:380px 1fr;gap:0;min-height:calc(100vh - 200px);}
+.app{display:grid;grid-template-columns:380px 1fr;gap:0;align-items:start;}
 @media(max-width:900px){.app{grid-template-columns:1fr;}}
 .left{border-right:1px solid var(--border);display:flex;flex-direction:column;}
 .panel-bar{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surf);}
@@ -53,6 +53,7 @@ select:focus{border-color:var(--women);}
 .c-row.selected{background:rgba(244,114,182,.08);border-left:3px solid var(--women);padding-left:11px;}
 .c-rank{font-family:var(--mono);font-size:10px;color:var(--dim);text-align:right;}
 .c-name{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.comment-badge{font-size:10px;opacity:.6;vertical-align:middle;cursor:default;}
 .bar-wrap{position:relative;height:14px;background:var(--surf3);border-radius:3px;overflow:hidden;}
 .bar-center{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--border2);}
 .bar-fill{position:absolute;top:2px;bottom:2px;border-radius:2px;}
@@ -61,7 +62,7 @@ select:focus{border-color:var(--women);}
 .bar-zero{width:4px;left:calc(50% - 2px);background:var(--zero);}
 .c-sggi{font-family:var(--mono);font-size:11px;text-align:right;}
 .pos{color:var(--pos)}.neg{color:var(--neg)}.zer{color:var(--zero)}
-.right{display:flex;flex-direction:column;overflow:hidden;}
+.right{display:flex;flex-direction:column;overflow-y:auto;position:sticky;top:0;max-height:100vh;}
 .detail-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);background:var(--surf);}
 .detail-empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:13px;flex-direction:column;gap:8px;}
 .detail-empty .arrow{font-size:24px;animation:pulse 2s infinite;}
@@ -176,7 +177,8 @@ function renderList(){
       else if(sggi>0)barHtml=`<div class="bar-fill bar-pos" style="width:${pct}%"></div>`;
       else barHtml=`<div class="bar-fill bar-neg" style="width:${pct}%;right:50%;left:unset"></div>`;
     }
-    row.innerHTML=`<div class="c-rank">${i+1}</div><div class="c-name">${flag(d.name)} ${d.name}</div><div class="bar-wrap"><div class="bar-center"></div>${barHtml}</div><div class="c-sggi ${cls}">${Math.abs(sggi??0)>=1?(sggi>0?"+1.000":"-1.000"):fmt(sggi,3)}</div>`;
+    const hasComment=COMMENTS[d.name]!==undefined;
+    row.innerHTML=`<div class="c-rank">${i+1}</div><div class="c-name">${flag(d.name)} ${d.name}${hasComment?' <span class="comment-badge" title="詳細コメントあり">📝</span>':""}</div><div class="bar-wrap"><div class="bar-center"></div>${barHtml}</div><div class="c-sggi ${cls}">${Math.abs(sggi??0)>=1?(sggi>0?"+1.000":"-1.000"):fmt(sggi,3)}</div>`;
     row.addEventListener("click",()=>{selectedCountry=selectedCountry===d.name?null:d.name;renderList();renderDetail(selectedCountry?d:null);if(selectedCountry&&typeof gtag!=="undefined"){gtag("event","select_country",{country_name:selectedCountry,sggi_value:Math.round((d.sggi||0)*10000)/10000});}});
     list.appendChild(row);
   });
